@@ -24,6 +24,7 @@ public class Order extends AbstractEntity<OrderId> {
     @Enumerated(value = EnumType.STRING)
     private OrderState state;
 
+    // this is for further work: switching currencies
     @Column(name = "order_currency")
     @Enumerated(value = EnumType.STRING)
     private Currency currency;

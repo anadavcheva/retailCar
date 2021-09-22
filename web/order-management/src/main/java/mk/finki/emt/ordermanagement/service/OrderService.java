@@ -16,12 +16,14 @@ import java.util.Set;
 
 public interface OrderService {
 
+    // switch order state from CREATED to PROCESSING
     OrderId placeOrder(OrderId orderId);
 
     List<Order> findAll();
 
     Order findById(OrderId id);
 
+    //get order items
     Set<OrderItem> findAllById(OrderId id);
 
     OrderItem addItem(OrderId orderId, OrderItemForm orderItemForm)
@@ -31,9 +33,12 @@ public interface OrderService {
 
     OrderId createOrder();
 
+    // increasing quantity for given order item
     void increaseQuantity(OrderId orderId, OrderItemId orderItemId);
 
+    // decreasing quantity for given order item
     void decreaseQuantity(OrderId orderId, OrderItemId orderItemId);
 
+    // Cancel the order before you click place order
     void cancelOrder(OrderId orderId);
 }

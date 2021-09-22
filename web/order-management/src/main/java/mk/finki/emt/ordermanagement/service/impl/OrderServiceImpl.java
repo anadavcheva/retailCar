@@ -11,13 +11,10 @@ import mk.finki.emt.ordermanagement.service.forms.OrderForm;
 import mk.finki.emt.ordermanagement.service.forms.OrderItemForm;
 import mk.ukim.finki.emt.sharedkernel.domain.events.orders.OrderItemCreated;
 import mk.ukim.finki.emt.sharedkernel.domain.events.orders.OrderItemRemoved;
-import mk.ukim.finki.emt.sharedkernel.domain.financial.Money;
 import mk.ukim.finki.emt.sharedkernel.infra.DomainEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import java.time.Instant;
 import java.util.*;
 
@@ -35,6 +32,10 @@ public class OrderServiceImpl  implements OrderService {
         Order newOrder = this.findById(orderId);
         newOrder.changeOrderState(OrderState.PROCESSING);
         newOrder.setMoney(newOrder.totalPrice());
+        // when we place the order, we actually save it, so the car entity must be informed to decrease their sales.
+
+        newOrder.getOrderItemSet()
+                .forEach(item -> domainEventPublisher.publish(new OrderItemCreated(item.getCarId().getId(), item.getQuantity())));
         return newOrder.getId();
     }
 
@@ -57,17 +58,7 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public OrderItem addItem(OrderId orderId, OrderItemForm orderItemForm) throws OrderIdNotExistException {
         Order order = orderRepository.findById(orderId).orElseThrow(OrderIdNotExistException::new);
-        OrderItem orderItem = order.getOrderItemSet()
-                .stream()
-                .filter(item -> item.getModel().equals(orderItemForm.getCar().getModel()))
-                .findAny().orElse(null);
-        if (orderItem != null) {
-            return orderItem;
-        }
-        OrderItem item = order.addItem(orderItemForm.getCar(), orderItemForm.getQuantity());
-        orderRepository.saveAndFlush(order);
-        domainEventPublisher.publish(new OrderItemCreated(orderItemForm.getCar().getId().getId(), orderItemForm.getQuantity()));
-        return item;
+        return order.addItem(orderItemForm.getCar(), orderItemForm.getQuantity());
     }
 
     @Override
@@ -79,9 +70,6 @@ public class OrderServiceImpl  implements OrderService {
                 .findFirst().orElse(null);
         order.removeItem(orderItemId);
         orderRepository.saveAndFlush(order);
-        if (orderItem != null) {
-            domainEventPublisher.publish(new OrderItemRemoved(orderItem.getCarId().getId(), orderItem.getQuantity()));
-        }
     }
 
     @Override
@@ -93,6 +81,9 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public void cancelOrder(OrderId orderId) {
         Order order = this.findById(orderId);
+        // when we cancel the order, we actually delete it, so we need to delete the items in it, so the car entity must be informed to decrease their sales.
+        order.getOrderItemSet()
+                .forEach(item -> domainEventPublisher.publish(new OrderItemRemoved(item.getCarId().getId(), item.getQuantity())));
         this.orderRepository.delete(order);
     }
 

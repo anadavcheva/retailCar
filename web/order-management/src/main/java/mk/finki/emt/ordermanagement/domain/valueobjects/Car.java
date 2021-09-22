@@ -33,7 +33,6 @@ public class Car implements ValueObject {
     }
 
     @JsonCreator
-    // ovde treba da se dodadat @JsonProperty na sekoj parametar
     public Car(@JsonProperty("id") CarId id,
                @JsonProperty("model") String model,
                @JsonProperty("color") String color,
