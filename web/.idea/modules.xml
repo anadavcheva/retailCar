@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/authentication/authentication.iml" filepath="$PROJECT_DIR$/authentication/authentication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ddd-retail-car.iml" filepath="$PROJECT_DIR$/ddd-retail-car.iml" />
+      <module fileurl="file://$PROJECT_DIR$/order-management/order-management.iml" filepath="$PROJECT_DIR$/order-management/order-management.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retail-a-car/retail-a-car.iml" filepath="$PROJECT_DIR$/retail-a-car/retail-a-car.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shared-kernel/shared-kernel.iml" filepath="$PROJECT_DIR$/shared-kernel/shared-kernel.iml" />
+    </modules>
+  </component>
+</project>
