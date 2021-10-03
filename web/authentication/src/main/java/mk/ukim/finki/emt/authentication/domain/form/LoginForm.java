@@ -1,8 +1,9 @@
 package mk.ukim.finki.emt.authentication.domain.form;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class LoginForm {
 
     public String username;

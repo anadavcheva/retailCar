@@ -1,5 +1,6 @@
 package mk.ukim.finki.emt.authentication.domain.valueobjects;
 
+import lombok.Getter;
 import lombok.NonNull;
 import mk.ukim.finki.emt.sharedkernel.domain.base.ValueObject;
 
@@ -7,6 +8,7 @@ import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
+@Getter
 public class Password implements ValueObject {
 
     private final String password;

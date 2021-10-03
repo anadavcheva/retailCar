@@ -6,6 +6,7 @@ import mk.ukim.finki.emt.authentication.domain.model.User;
 
 @Getter
 public class UserForm {
+
     private String username;
     private Role role;
 

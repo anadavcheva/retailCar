@@ -2,7 +2,6 @@ package mk.ukim.finki.emt.sharedkernel.domain.base;
 
 
 import lombok.Getter;
-import org.springframework.data.util.ProxyUtils;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.EmbeddedId;
@@ -34,21 +33,16 @@ public class AbstractEntity<ID extends DomainObjectId> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || !getClass().equals(ProxyUtils.getUserClass(obj))) {
-            return false;
-        }
-
-        var other = (AbstractEntity<?>) obj;
-        return id != null && id.equals(other.id);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractEntity<?> that = (AbstractEntity<?>) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return id == null ? super.hashCode() : id.hashCode();
+        return Objects.hash(id);
     }
 
     @Override

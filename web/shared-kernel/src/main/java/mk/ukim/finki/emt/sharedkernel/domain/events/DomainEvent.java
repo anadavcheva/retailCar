@@ -2,7 +2,6 @@ package mk.ukim.finki.emt.sharedkernel.domain.events;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 
@@ -11,8 +10,8 @@ import java.time.Instant;
 @Getter
 public class DomainEvent {
 
-    private String topic;
-    private Instant occurredOn;
+    private final String topic;
+    private final Instant occurredOn;
 
     public DomainEvent(String topic) {
         this.occurredOn = Instant.now();

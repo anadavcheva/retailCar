@@ -5,9 +5,11 @@ import Cars from '../Cars/cars'
 import OrderTerm from '../Orders/OrderTerm/orderTerm'
 import Order from '../Orders/OrderList/orders'
 import Header from '../Header/header'
+import Register from '../Auth/Register/register'
+import Login from '../Auth/Login/login'
 import OrderService from "../../service/orderService";
 import CarService from "../../service/carService";
-
+import AuthService from "../../service/authService";
 
 class App extends Component {
     constructor(props) {
@@ -17,37 +19,51 @@ class App extends Component {
             total: null,
             orderItemList: [],
             orders: [],
-            cars: []
+            cars: [],
+            loggedUser: undefined,
+            errorMessage: null,
+            userId: null,
+            billingAddress: {},
+            bool: false
         }
     }
 
     render() {
         return (
             <Router>
-                <Header/>
+                <Header user={this.state.loggedUser} logout={this.logoutUser}/>
                 <div className="row">
-                    <Route path={"/cars"}>
-                        <Cars cars={this.state.cars}
-                              orderId = {this.state.orderId}
-                              onAddOrderItem  = {this.addOrderItem}/>
-                        {this.state.orderId === undefined && <button onClick={this.createOrder}> Create New Order </button>}
-                        {this.state.orderId !== undefined &&
-                        <OrderTerm orderId = {this.state.orderId}
-                                   orderItemList={this.state.orderItemList}
-                                   increaseQuantity= {this.increaseQuantity}
-                                   decreaseQuantity = {this.decreaseQuantity}
-                                   deleteOrderItem = {this.deleteOrderItem}
-                                   totalPrice = {this.state.total}
-                                   cancelOrder = {this.cancelOrder}
-                                   placeOrder = {this.placeOrder}/>}
+                    <Route path={"/register"}>
+                        <Register registerUser={this.registerUser} errorMessage={this.state.errorMessage}
+                                  userId={this.state.userId}/>
                     </Route>
-                    <Route path = {"/orders"}>
-                        <Order orders = {this.state.orders}/>
+                    <Route path={"/login"}>
+                        <Login loginUser={this.loginUser} errorMessage={this.state.errorMessage}/>
+                        <Route path={"/cars"}>
+                            <Cars cars={this.state.cars}
+                                  orderId={this.state.orderId}
+                                  onAddOrderItem={this.addOrderItem}/>
+                            {this.state.orderId === undefined &&
+                            <button onClick={this.createOrder}> Create New Order </button>}
+                            {this.state.orderId !== undefined &&
+                            <OrderTerm orderId={this.state.orderId}
+                                       orderItemList={this.state.orderItemList}
+                                       increaseQuantity={this.increaseQuantity}
+                                       decreaseQuantity={this.decreaseQuantity}
+                                       deleteOrderItem={this.deleteOrderItem}
+                                       totalPrice={this.state.total}
+                                       cancelOrder={this.cancelOrder}
+                                       placeOrder={this.placeOrder}/>}
+                        </Route>
+                        <Route path={"/orders"}>
+                            <Order orders={this.state.orders}/>
+                        </Route>
                     </Route>
                 </div>
             </Router>
         );
     }
+
 
     componentDidMount() {
         this.loadOrders();
@@ -136,7 +152,7 @@ class App extends Component {
                 let list = [...this.state.orderItemList]
                 list.push(orderItem)
                 this.setState({
-                    orderItemList : list
+                    orderItemList: list
                 })
                 this.getTotalPrice();
             });
@@ -173,7 +189,53 @@ class App extends Component {
             });
     }
 
+    registerUser = (username, email, role, billingAddress_streetName, billingAddress_streetNumber, billingAddress_streetCity, billingAddress_streetCountry, password, confirmPassword) => {
+        AuthService.registerUser(username, email, role, billingAddress_streetName, billingAddress_streetNumber, billingAddress_streetCity, billingAddress_streetCountry, password, confirmPassword)
+            .then((data) => {
+                this.setState({
+                    userId: data.data,
+                    errorMessage: null
+                });
+            })
+            .catch(err => {
+                    if (err != null) {
+                        this.setState({
+                            errorMessage: "REGISTER FAILED! Username already exists or Passwords do not match"})};
+                }
+            )
 
+    }
+
+    loginUser = (username, password) => {
+        AuthService.loginUser(username, password)
+            .then((data) => {
+                this.setState({
+                    loggedUser: data.data,
+                    errorMessage: null,
+                    bool : true
+                })
+            })
+            .catch(err => {
+                this.setState({
+                    errorMessage: "Invalid credentials. Try again!"})});
+    }
+
+    logoutUser = () => {
+        this.setState({
+            userId: null,
+            loggedUser: null,
+            bool : false
+        });
+    }
+
+    getBillingAddress = () => {
+        AuthService.getBillingAddress(this.state.loggedUser.id.id)
+            .then((data) => {
+                this.setState({
+                    billingAddress: data.data
+                });
+            })
+    }
 
 }
 

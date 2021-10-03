@@ -18,13 +18,19 @@ const header = (props) => {
                         <li className="nav-item active">
                             <Link className="nav-link" to={"/orders"}>Orders</Link>
                         </li>
-                        {/*<li className="nav-item active">*/}
-                        {/*    <Link className={"nav-link"} to={"/manufacturers"}>Manufacturers</Link>*/}
-                        {/*</li>*/}
+                        <li className="nav-item active">
+                            {props.user !== undefined && <Link className="nav-link" to={"/orders"}>Orders</Link>}
+                        </li>
                     </ul>
-                    {/*<form className="form-inline mt-2 mt-md-0 ml-3">*/}
-                    {/*    <Link className="btn btn-outline-info my-2 my-sm-0" to={"/login"}>Login</Link>*/}
-                    {/*</form>*/}
+                    <form className="form-inline mt-2 mt-md-0 ml-3">
+                        {props.user === undefined && <Link className="btn btn-outline-info my-2 my-sm-0" to={"/register"}>Register</Link>}
+                    </form>
+                    <form className="form-inline mt-2 mt-md-0 ml-3">
+                        {props.user === undefined && <Link className="btn btn-outline-info my-2 my-sm-0" to={"/login"}>Login</Link>}
+                    </form>
+                    <form className="form-inline mt-2 mt-md-0 ml-3">
+                        {props.user !== undefined && <button className="btn btn-info" onClick={() => {props.logout()}}>LOGOUT</button>}
+                    </form>
                 </div>
             </nav>
         </header>

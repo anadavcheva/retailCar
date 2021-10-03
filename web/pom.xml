@@ -15,6 +15,7 @@
 
     <modules>
         <module>shared-kernel</module>
+        <module>authentication</module>
         <module>retail-a-car</module>
         <module>order-management</module>
     </modules>
